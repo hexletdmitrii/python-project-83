@@ -1,0 +1,27 @@
+__pycache__/
+*.py[cod]
+*.so
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Flask
+instance/
+.webassets-cache
+.pytest_cache/
+
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cove
