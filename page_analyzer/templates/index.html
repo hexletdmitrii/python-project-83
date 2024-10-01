@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Analyzer</title>
-</head>
-<body>
-    <h1>Анализатор страниц</h1>
-    <p>Добро пожаловать в Page Analyzer!</p>
-</body>
-</html>
+{% extends "base.html" %}
+    {% block content %}
+    <div class="container-lg mt-3">
+        <p>Добро пожаловать в Page Analyzer!</p>
+        <div>
+            <form action="{{url_for('add_url')}}" method="post">
+                <input type="text" name="url" id="url" placeholder="https://example.ru">
+                <input type="submit" class="btn btn-primary" value="Проверить">
+            </form>
+        </div>
+    </div>
+{% endblock %}

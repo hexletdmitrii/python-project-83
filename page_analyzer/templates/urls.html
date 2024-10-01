@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+    {% block content %}
+    
+    
+    <div class="container-lg mt-3">
+    <div
+        class="table-responsive"
+    >
+        <table
+            class="table table-primary"
+        >   
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">URL Сайта</th>
+                    <th scope="col">Последняя проверка</th>
+                    <th scope="col">Код ответа</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for url in urls %}
+                    <tr class="">
+                        <td>{{ url.id }}</td>
+                        <td>{{ url.name }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+        </table>
+    </div>
+    </div>
+    <a
+    href="{{url_for('index')}}"
+    class="link"
+    >На главную!</a  
+    {% endblock %}
