@@ -26,7 +26,7 @@ def show_urls():
     return render_template("urls.html", urls=urls)
 
 
-@app.get('/urls/<id>')
+@app.get('/urls/<int:id>')
 def show_url(id):
     repo = Url_sql()
     try:
@@ -44,7 +44,9 @@ def check_url(id):
     try:
         s = repo.add_check(url_id=id)
         if not s:
-            flash('Ошибка проверки!!!', 'danger')
+            flash('Произошла ошибка при проверке', 'danger')
+        else:
+            flash('Страница успешно проверена')
     except EnvironmentError as e:
         flash(f"Ошибка базы данных {e}", 'danger')
     return redirect(url_for('show_url', id=id))
@@ -55,18 +57,18 @@ def add_url():
     repo = Url_sql()
     url = request.form['url']
     if not validators.url(url):
-        flash('Введите корректный URL! Пример: "http://example.ru"', 'danger')
+        flash('Некорректный URL', 'danger')
         return redirect(url_for('index'))
     url = urlparse(url)
     base_url = f"{url.scheme}://{url.netloc}/"
     try:
         url_check = repo.show_url(name=base_url)
         if len(url_check) > 0:
-            flash(f'{base_url} Уже проверен', 'success')
+            flash(f'Страница уже существует', 'success')
             url_id = url_check[0]['id']
             return redirect(url_for('show_url', id=url_id))
         url_id = repo.add_url(base_url)
-        flash(f'{base_url} Добавлен в базу', 'success')
+        flash(f'{base_url} "Страница успешно добавлена"', 'success')
         return redirect(url_for('show_url', id=url_id))
     except Exception as e:
         flash(f'Ошибка базы данных{e}', 'danger')
