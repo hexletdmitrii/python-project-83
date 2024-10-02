@@ -16,3 +16,6 @@ test:
 
 run:
 	poetry run python app.py
+
+build:
+	./build.sh

@@ -48,14 +48,17 @@ class Url_sql():
 
     def add_check(self, url_id):
         try:
-            response = requests.get(self.show_url(id=url_id, checks=False)[0]['name'])
+            response = requests.get(
+                self.show_url(id=url_id, checks=False)[0]['name'])
             if response.status_code != 200:
                 return
             else:
                 soup = BeautifulSoup(response.content, 'html.parser')
                 title = soup.find('title').text if soup.find('title') else None
                 h1 = soup.find('h1').text if soup.find('h1') else None
-                description = soup.find('meta', attrs={'name': 'description'})['content']
+                description = soup.find(
+                    'meta',
+                    attrs={'name': 'description'})['content']
         except :
             return
         with self.conn.cursor() as curr:

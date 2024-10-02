@@ -9,6 +9,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 repo.create_table()
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -30,7 +31,7 @@ def show_url(id):
 
 @app.post('/urls/<id>/checks')
 def check_url(id):
-    s  = repo.add_check(url_id=id)
+    s = repo.add_check(url_id=id)
     if not s:
         flash('Ошибка проверки!!!', 'danger')
     return redirect(url_for('show_url', id=id))
