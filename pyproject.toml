@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "page_analyzer"}]
 
 [tool.poetry.dependencies]
-python = "^3.8.20"
+python = "^3.8.18"
 flake8 = "^7.1.1"
 gunicorn = "^23.0.0"
 0flask = "^0.0.1"
