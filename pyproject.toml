@@ -4,18 +4,20 @@ version = "0.1.0"
 description = ""
 authors = ["Dmitrii L <hexletdmitrii@gmail.com>"]
 readme = "README.md"
+packages = [{include = "page_analyzer"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 flake8 = "^7.1.1"
-pytest = "^8.3.2"
 gunicorn = "^23.0.0"
-flask = "^3.0.3"
+0flask = "^0.0.1"
+Flask = "^3.0.3"
 psycopg2-binary = "^2.9.9"
 python-dotenv = "^1.0.1"
 validators = "^0.34.0"
 requests = "^2.32.3"
 beautifulsoup4 = "^4.12.3"
+PyYAML = "^6.0.2"
 
 
 [build-system]
