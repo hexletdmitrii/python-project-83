@@ -20,7 +20,7 @@ def show_urls():
     repo = Url_sql()
     try:
         urls = repo.show_url()
-    except EnvironmentError as e:
+    except Exception as e:
         flash(f"Ошибка базы данных {e}", 'danger')
         urls = []
     return render_template("urls.html", urls=urls)
@@ -31,7 +31,7 @@ def show_url(id):
     repo = Url_sql()
     try:
         url = repo.show_url(id=id)
-    except EnvironmentError as e:
+    except Exception as e:
         flash(f"Ошибка базы данных {e}", 'danger')
         url = []
     # checks = repo.show_checks(url_id=id)
@@ -47,7 +47,7 @@ def check_url(id):
             flash('Произошла ошибка при проверке', 'danger')
         else:
             flash('Страница успешно проверена')
-    except EnvironmentError as e:
+    except Exception as e:
         flash(f"Ошибка базы данных {e}", 'danger')
     return redirect(url_for('show_url', id=id))
 
