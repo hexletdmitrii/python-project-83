@@ -13,3 +13,6 @@ lint:
 	
 test:
 	poetry run pytest
+
+run:
+	poetry run python app.py

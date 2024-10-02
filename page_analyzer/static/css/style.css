@@ -1,0 +1,8 @@
+body {
+    background-color: #212529;
+    color: #e0e0e0; 
+}
+header {
+    background-color: #1e1e1e;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}

@@ -5,13 +5,9 @@ from repository import Url_sql
 import validators
 
 repo = Url_sql()
-# load_dotenv()
-# database_url = os.getenv('DATABASE_URL')
-
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-
+repo.create_table()
 
 @app.route('/')
 def index():
@@ -34,7 +30,9 @@ def show_url(id):
 
 @app.post('/urls/<id>/checks')
 def check_url(id):
-    repo.add_check(url_id=id)
+    s  = repo.add_check(url_id=id)
+    if not s:
+        flash('Ошибка проверки!!!', 'danger')
     return redirect(url_for('show_url', id=id))
 
 
@@ -42,7 +40,7 @@ def check_url(id):
 def add_url():
     url = request.form['url']
     if not validators.url(url):
-        flash('Введите корректный URL! Пример: "http://example.ru"', 'error')
+        flash('Введите корректный URL! Пример: "http://example.ru"', 'danger')
         return redirect(url_for('index'))
     url = urlparse(url)
     base_url = f"{url.scheme}://{url.netloc}/"
@@ -56,7 +54,7 @@ def add_url():
         flash(f'{base_url} Добавлен в базу', 'success')
         return redirect(url_for('show_url', id=url_id))
     except Exception as e:
-        flash(f'Ошибка базы данных{e}', 'error')
+        flash(f'Ошибка базы данных{e}', 'danger')
         return redirect(url_for('index'))
 
 

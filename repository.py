@@ -2,6 +2,8 @@ import os
 import psycopg2
 from dotenv import load_dotenv
 from psycopg2.extras import DictCursor
+import requests
+from bs4 import BeautifulSoup
 
 
 class Url_sql():
@@ -43,53 +45,68 @@ class Url_sql():
             id = curr.fetchone()[0]
             self.conn.commit()
             return id
-        
+
     def add_check(self, url_id):
+        try:
+            response = requests.get(self.show_url(id=url_id, checks=False)[0]['name'])
+            if response.status_code != 200:
+                return
+            else:
+                soup = BeautifulSoup(response.content, 'html.parser')
+                title = soup.find('title').text if soup.find('title') else None
+                h1 = soup.find('h1').text if soup.find('h1') else None
+                description = soup.find('meta', attrs={'name': 'description'})['content']
+        except :
+            return
         with self.conn.cursor() as curr:
-            # print(url_id)
             curr.execute("""
-                        INSERT INTO url_checks (url_id) VALUES (%s) RETURNING id;
-                         """, (url_id,))
+                        INSERT INTO url_checks
+                        (url_id, status_code, h1, title, description)
+                        VALUES (%s, %s, %s, %s, %s) RETURNING id;
+                         """, (url_id, 200, h1, title, description))
             id = curr.fetchone()[0]
             self.conn.commit()
-            print(id)
             return id
 
-    def show_url(self, id: int = None, name: str = None):
+    def show_url(self, id: int = None, name: str = None, checks: bool = True):
         with self.conn.cursor(cursor_factory=DictCursor) as curr:
             if not id and not name:
                 curr.execute("""
-                             SELECT id, name, created_at FROM urls ORDER by created_at DESC;
+                             SELECT id, name, created_at
+                             FROM urls ORDER by created_at DESC;
                              """)
             elif id and not name:
                 curr.execute("""
-                         SELECT id, name, created_at FROM urls WHERE id = %s ORDER by created_at DESC;
+                         SELECT id, name, created_at
+                         FROM urls WHERE id = %s
+                         ORDER by created_at DESC;
                          """, (id, ))
             elif not id and name:
                 curr.execute("""
-                         SELECT id, name, created_at FROM urls WHERE name = %s ORDER by created_at DESC;
+                         SELECT id, name, created_at
+                         FROM urls WHERE name = %s
+                         ORDER by created_at DESC;
                          """, (name, ))
             result = []
             for item in curr:
-                result.append({'id': item['id'], 'name': item['name'], 'created_at': item['created_at']})
+                data = {'id': item['id'],
+                        'name': item['name'],
+                        'created_at': item['created_at']}
+                if checks:
+                    data['checks'] = self.show_checks(url_id=item['id'])
+                result.append(data)
         return result
-    
+
     def show_checks(self, url_id: int = None):
         with self.conn.cursor(cursor_factory=DictCursor) as curr:
             curr.execute("""
-                        SELECT * FROM url_checks WHERE url_id = %s ORDER BY created_at DESC;
+                        SELECT * FROM url_checks
+                        WHERE url_id = %s
+                        ORDER BY created_at DESC;
                          """, (url_id,))
             result = []
             for item in curr:
-                result.append({
-                    'id': item['id'],
-                    'url_id': item['url_id'],
-                    'status_code': item['status_code'],
-                    'h1': item['h1'],
-                    'title': item['title'],
-                    'description': item['description'],
-                    'created_at': item['created_at'] 
-                                })
+                result.append(item)
             return result
 
     def update(
@@ -97,7 +114,7 @@ class Url_sql():
             id: int = None,
             name: str = None,
             clear_table: bool = False
-            ):
+    ):
 
         with self.conn.cursor(cursor_factory=DictCursor) as curr:
             if clear_table:
@@ -105,17 +122,17 @@ class Url_sql():
                 curr.execute("DROP TABLE url_checks")
                 self.create_table()
             elif id and name is None:
-                curr.execute("DELETE FROM urls WHERE id = %s RETURNING id;", (id,))
+                curr.execute(
+                    "DELETE FROM urls WHERE id = %s RETURNING id;", (id,)
+                )
             elif id and name:
-                curr.execute("UPDATE urls SET name = %s WHERE id = %s RETURNING id;", (name, id,))
+                curr.execute(
+                    "UPDATE urls SET name = %s WHERE id = %s RETURNING id;",
+                    (name, id,))
         self.conn.commit()
         return id
 
 
 if __name__ == "__main__":
     sql = Url_sql()
-    # print(sql.show_url())
-    # sql.add_url(name='test')
-    # print(sql.show_url())
     sql.update(clear_table=True)
-    # print(sql.show_url())
