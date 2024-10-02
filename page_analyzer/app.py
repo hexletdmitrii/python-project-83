@@ -64,7 +64,7 @@ def add_url():
     try:
         url_check = repo.show_url(name=base_url)
         if len(url_check) > 0:
-            flash(f'Страница уже существует', 'success')
+            flash('Страница уже существует', 'success')
             url_id = url_check[0]['id']
             return redirect(url_for('show_url', id=url_id))
         url_id = repo.add_url(base_url)
