@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 from repository import Url_sql
 import validators
 
-repo = Url_sql()
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 repo.create_table()
@@ -17,12 +17,14 @@ def index():
 
 @app.get('/urls')
 def show_urls():
+    repo = Url_sql()
     urls = repo.show_url()
     return render_template("urls.html", urls=urls)
 
 
 @app.get('/urls/<id>')
 def show_url(id):
+    repo = Url_sql()
     url = repo.show_url(id=id)
     checks = repo.show_checks(url_id=id)
     print(checks)
@@ -31,6 +33,7 @@ def show_url(id):
 
 @app.post('/urls/<id>/checks')
 def check_url(id):
+    repo = Url_sql()
     s = repo.add_check(url_id=id)
     if not s:
         flash('Ошибка проверки!!!', 'danger')
@@ -39,6 +42,7 @@ def check_url(id):
 
 @app.post('/urls')
 def add_url():
+    repo = Url_sql()
     url = request.form['url']
     if not validators.url(url):
         flash('Введите корректный URL! Пример: "http://example.ru"', 'danger')
