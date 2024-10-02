@@ -46,7 +46,7 @@ def check_url(id):
         if not s:
             flash('Произошла ошибка при проверке', 'danger')
         else:
-            flash('Страница успешно проверена')
+            flash('Страница успешно проверена', 'success')
     except Exception as e:
         flash(f"Ошибка базы данных {e}", 'danger')
     return redirect(url_for('show_url', id=id))
