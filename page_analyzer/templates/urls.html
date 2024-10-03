@@ -17,8 +17,8 @@
                     <tr onclick="window.location='{{ url_for('show_url', id=url.id) }}';" style="cursor: pointer;">
                         <td>{{ url.id }}</td>
                         <td><class="text-info">{{ url.name }}</a></td>
-                        <td>{{ url.created_at | format_date }}</td>
-                        <td>{{ url.status_code }}</td>
+                        <td>{{ url.created_at | format_date if url.created_at else ''}}</td>
+                        <td>{{ url.status_code if url.status_code else '' }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
