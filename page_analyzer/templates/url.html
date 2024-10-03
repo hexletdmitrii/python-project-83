@@ -14,7 +14,7 @@
                 <tr>
                     <td>{{ url.id }}</td>
                     <td>{{url.name}}</td>
-                    <td>{{url.created_at | format_date}}</td>
+                    <td>{{url.created_at | format_date if url.created_at else '' }}</td>
                 </tr>
             </tbody>
         </table>
@@ -47,7 +47,7 @@
                     <td>{{check.h1}}</td>
                     <td>{{check.title}}</td>
                     <td>{{check.description}}</td>
-                    <td>{{check.created_at | format_date }}</td>
+                    <td>{{check.created_at | format_date if check.created_at else '' }} </td>
                 </tr>
                 {% endfor %}
             </tbody>

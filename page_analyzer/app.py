@@ -30,6 +30,8 @@ def show_urls():
 @app.get('/urls/<int:id>')
 def show_url(id):
     data, errors = Url_sql().show_url(id)
+    if not data:
+        return redirect(url_for('index'))
     return render_template("url.html", url=data)
 
 
