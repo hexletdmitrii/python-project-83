@@ -1,13 +1,20 @@
 from flask import Flask, render_template, url_for, redirect, request, flash
 import os
 from urllib.parse import urlparse
-from repository import Url_sql
+from page_analyzer.repository import Url_sql
 import validators
+from datetime import datetime
 
 repo = Url_sql()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 repo.create_table()
+
+
+@app.template_filter('format_date')
+def format_date(value):
+    date_object = datetime.strptime(str(value), "%Y-%m-%d %H:%M:%S.%f")
+    return date_object.strftime("%Y-%m-%d")
 
 
 @app.route('/')
@@ -17,62 +24,45 @@ def index():
 
 @app.get('/urls')
 def show_urls():
-    repo = Url_sql()
-    try:
-        urls = repo.show_url()
-    except Exception as e:
-        flash(f"Ошибка базы данных {e}", 'danger')
-        urls = []
-    return render_template("urls.html", urls=urls)
+    data, errors = Url_sql().show_urls()
+    return render_template("urls.html", urls=data)
 
 
 @app.get('/urls/<int:id>')
 def show_url(id):
-    repo = Url_sql()
-    try:
-        url = repo.show_url(id=id)
-    except Exception as e:
-        flash(f"Ошибка базы данных {e}", 'danger')
-        url = []
-    # checks = repo.show_checks(url_id=id)
-    return render_template("url.html", url=url[0])
+    data, errors = Url_sql().show_url(id)
+    return render_template("url.html", url=data)
 
 
 @app.post('/urls/<id>/checks')
 def check_url(id):
-    repo = Url_sql()
-    try:
-        s = repo.add_check(url_id=id)
-        if not s:
-            flash('Произошла ошибка при проверке', 'danger')
-        else:
-            flash('Страница успешно проверена', 'success')
-    except Exception as e:
-        flash(f"Ошибка базы данных {e}", 'danger')
+    url_id, errors = Url_sql().add_check(id)
+    if errors or not url_id:
+        flash('Произошла ошибка при проверке', 'danger')
+    else:
+        flash('Страница успешно проверена', 'success')
     return redirect(url_for('show_url', id=id))
 
 
 @app.post('/urls')
 def add_url():
-    repo = Url_sql()
     url = request.form['url']
     if not validators.url(url):
         flash('Некорректный URL', 'danger')
         return redirect(url_for('index'))
     url = urlparse(url)
     base_url = f"{url.scheme}://{url.netloc}/"
-    try:
-        url_check = repo.show_url(name=base_url)
-        if len(url_check) > 0:
-            flash('Страница уже существует', 'success')
-            url_id = url_check[0]['id']
-            return redirect(url_for('show_url', id=url_id))
-        url_id = repo.add_url(base_url)
-        flash(f'{base_url} "Страница успешно добавлена"', 'success')
-        return redirect(url_for('show_url', id=url_id))
-    except Exception as e:
-        flash(f'Ошибка базы данных{e}', 'danger')
+    data, errors = Url_sql().show_url(name=base_url)
+    if errors:
         return redirect(url_for('index'))
+    if data:
+        flash('Страница уже существует', 'success')
+        return redirect(url_for('show_url', id=data['id']))
+    url_id, errors = Url_sql().add_url(base_url)
+    if errors:
+        return redirect(url_for('index'))
+    flash("Страница успешно добавлена", 'success')
+    return redirect(url_for('show_url', id=url_id))
 
 
 if __name__ == '__main__':

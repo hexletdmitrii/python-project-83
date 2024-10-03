@@ -12,6 +12,6 @@ url_id BIGINT NOT NULL,
 status_code INT,
 h1 VARCHAR(255),
 title VARCHAR(255),
-description VARCHAR(255),
+description VARCHAR(510),
 created_at TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP);
                          

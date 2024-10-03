@@ -4,22 +4,27 @@ version = "0.1.0"
 description = ""
 authors = ["Dmitrii L <hexletdmitrii@gmail.com>"]
 readme = "README.md"
-packages = [{include = "page_analyzer"}]
+packages = [
+  { include = "page_analyzer" },
+]
 
 [tool.poetry.dependencies]
-python = "^3.8.18"
+python = "^3.10"
 flake8 = "^7.1.1"
 gunicorn = "^23.0.0"
-0flask = "^0.0.1"
-Flask = "^3.0.3"
+Flask = "^3.0"
 psycopg2-binary = "^2.9.9"
 python-dotenv = "^1.0.1"
 validators = "^0.34.0"
 requests = "^2.32.3"
 beautifulsoup4 = "^4.12.3"
-PyYAML = "^6.0.2"
-pytest = "^8.3.3"
+PyYAML = "^6.0.1"
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.2"
+pytest-cov = "^4.1.0"
+flake8 = "^7.0.0"
+mypy = "^1.8.0"
 
 [build-system]
 requires = ["poetry-core"]

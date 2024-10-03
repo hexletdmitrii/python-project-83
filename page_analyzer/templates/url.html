@@ -6,7 +6,7 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>URL</th>
+                    <th>Имя</th>
                     <th>Дата создания</th>
                 </tr>
             </thead>
@@ -14,7 +14,7 @@
                 <tr>
                     <td>{{ url.id }}</td>
                     <td>{{url.name}}</td>
-                    <td>{{url.created_at}}</td>
+                    <td>{{url.created_at | format_date}}</td>
                 </tr>
             </tbody>
         </table>
@@ -24,7 +24,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-end mb-3">
         <form action="{{ url_for('check_url', id=url.id) }}" method="post">
-            <input type="submit" class="btn btn-primary" value="Проверить">
+            <input type="submit" class="btn btn-primary" value="Запустить проверку">
         </form>
     </div>
     <div class="table-responsive">
@@ -32,7 +32,7 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Код</th>
+                    <th>Код ответа</th>
                     <th>h1</th>
                     <th>title</th>
                     <th>description</th>
@@ -47,7 +47,7 @@
                     <td>{{check.h1}}</td>
                     <td>{{check.title}}</td>
                     <td>{{check.description}}</td>
-                    <td>{{check.created_at}}</td>
+                    <td>{{check.created_at | format_date }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

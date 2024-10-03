@@ -7,7 +7,7 @@
             <thead>
                 <tr>
                     <th scope="col">ID</th>
-                    <th scope="col">URL Сайта</th>
+                    <th scope="col">Имя</th>
                     <th scope="col">Последняя проверка</th>
                     <th scope="col">Код ответа</th>
                 </tr>
@@ -17,8 +17,8 @@
                     <tr onclick="window.location='{{ url_for('show_url', id=url.id) }}';" style="cursor: pointer;">
                         <td>{{ url.id }}</td>
                         <td><class="text-info">{{ url.name }}</a></td>
-                        <td>{{ url.checks[0].created_at if url.checks else '' }}</td>
-                        <td>{{ url.checks[0].status_code if url.checks else '' }}</td>
+                        <td>{{ url.created_at | format_date }}</td>
+                        <td>{{ url.status_code }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
