@@ -5,10 +5,9 @@ from page_analyzer.repository import Url_sql
 import validators
 from datetime import datetime
 
-repo = Url_sql()
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-repo.create_table()
 
 
 @app.template_filter('format_date')
