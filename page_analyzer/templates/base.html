@@ -22,10 +22,10 @@
                   <li><a href="https://github.com/hexletdmitrii/python-project-83" class="nav-link px-2 text-white">GitHub</a></li>
                 </ul>
         
-                <form action="{{url_for('add_url')}}" method="post" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                <form action="/urls " method="post" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
                     <div class="d-flex justify-content-between align-items-center">
-                      <input type="search" name="url" id="url" class="form-control form-control-dark text-bg-dark me-2" placeholder="Search..." aria-label="Search">
-                      <input type="submit" name="Проверить" class="btn btn-warning">
+                      <input type="text" name="url" class="form-control form-control-dark text-bg-dark me-2" placeholder="https://www.example.com" aria-label="Search">
+                      <input type="submit" value="Проверить" class="btn btn-warning">
                     </div>
                   </form>
               </div>
