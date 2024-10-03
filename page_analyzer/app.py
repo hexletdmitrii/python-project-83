@@ -8,6 +8,8 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
+
 @app.template_filter('format_date')
 def format_date(value):
     date_object = datetime.strptime(str(value), "%Y-%m-%d %H:%M:%S.%f")
