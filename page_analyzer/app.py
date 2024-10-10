@@ -39,7 +39,7 @@ def show_url(id):
 def check_url(id):
     url_id, errors = Url_sql().add_check(id)
     if errors or not url_id:
-        flash('Произошла ошибка при проверке', 'danger')
+        flash(f'Произошла ошибка при проверке {errors}', 'danger')
     else:
         flash('Страница успешно проверена', 'success')
     return redirect(url_for('show_url', id=id))

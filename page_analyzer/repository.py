@@ -46,7 +46,7 @@ class Url_sql():
                          status_code INT,
                          h1 VARCHAR(255),
                          title VARCHAR(255),
-                         description VARCHAR(510),
+                         description VARCHAR(255),
                         created_at TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP);
                          """)
             self.conn.commit()
@@ -68,9 +68,9 @@ class Url_sql():
                 return None, response.status_code
             else:
                 soup = BeautifulSoup(response.content, 'html.parser')
-                title = soup.find('title').text if soup.find('title') else ''
-                h1 = soup.find('h1').text if soup.find('h1') else ''
-                description = soup.find('meta', attrs={'name': 'description'})['content'] if soup.find('meta', attrs={'name': 'description'}) else ''
+                title = soup.find('title').text if soup.find('title')[:255] else ''
+                h1 = soup.find('h1').text if soup.find('h1')[:255] else ''
+                description = soup.find('meta', attrs={'name': 'description'})['content'] if soup.find('meta', attrs={'name': 'description'})[:255] else ''
         except Exception as e:
             return None, {'sql': e}
         sql = """INSERT INTO url_checks
