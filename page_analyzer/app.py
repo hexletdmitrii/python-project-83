@@ -4,8 +4,10 @@ from urllib.parse import urlparse
 from page_analyzer.repository import Url_sql
 import validators
 from datetime import datetime
+from dotenv import load_dotenv
 
 
+load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
@@ -62,7 +64,7 @@ def add_url():
     url_id, errors = Url_sql().add_url(base_url)
     if errors:
         return redirect(url_for('index'))
-    flash("Страница успешно добавлена", 'success')
+    flash('Страница успешно добавлена', 'success')
     return redirect(url_for('show_url', id=url_id))
 
 
