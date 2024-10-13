@@ -52,7 +52,7 @@ def add_url():
     url = request.form['url']
     if not validators.url(url):
         flash('Некорректный URL', 'danger')
-        return redirect(url_for('index'))
+        return render_template('index.html'), 422
     url = urlparse(url)
     base_url = f"{url.scheme}://{url.netloc}/"
     data, errors = Url_sql().show_url(name=base_url)
