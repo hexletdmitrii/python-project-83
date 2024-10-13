@@ -68,9 +68,9 @@ class Url_sql():
                 return None, response.status_code
             else:
                 soup = BeautifulSoup(response.content, 'html.parser')
-                title = soup.find('title').text if soup.find('title')[:255] else ''
-                h1 = soup.find('h1').text if soup.find('h1')[:255] else ''
-                description = soup.find('meta', attrs={'name': 'description'})['content'] if soup.find('meta', attrs={'name': 'description'})[:255] else ''
+                title = soup.find('title').text[:255] if soup.find('title') else ''
+                h1 = soup.find('h1').text[:255] if soup.find('h1') else ''
+                description = soup.find('meta', attrs={'name': 'description'})['content'][:255] if soup.find('meta', attrs={'name': 'description'}) else ''
         except Exception as e:
             return None, {'sql': e}
         sql = """INSERT INTO url_checks
