@@ -4,10 +4,10 @@ from urllib.parse import urlparse
 from page_analyzer.repository import Url_sql
 import validators
 from datetime import datetime
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 
 
-# load_dotenv()
+load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
