@@ -6,7 +6,7 @@ def get_url_params(url: str = None) -> dict:
     try:
         response = requests.get(url[0])
         if response.status_code != 200:
-            return None
+            return {'error': response.status_code}
         else:
             soup = BeautifulSoup(response.content, 'html.parser')
             title = soup.find('title').text[:255] if soup.find('title') else ''
