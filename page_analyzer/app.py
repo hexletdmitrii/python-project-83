@@ -54,7 +54,7 @@ def check_url(id):
 @app.post('/urls')
 def add_url():
     url = request.form['url']
-    if not validators.url(url):
+    if not validators.url(url) or len(url) > 255:
         flash('Некорректный URL', 'danger')
         return render_template('index.html'), 422
     url = urlparse(url)
