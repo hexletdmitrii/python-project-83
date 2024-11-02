@@ -17,41 +17,33 @@ class Url_sql:
 
     def make_sql(self, sql: str, sitters: tuple = ()):
         result = []
-        errors = {}
         with self.conn.cursor(cursor_factory=DictCursor) as curr:
-            try:
-                curr.execute(sql, sitters)
-                for item in curr:
-                    result.append(item)
-                self.conn.commit()
-            except Exception as e:
-                errors['sql'] = e
-        return result, errors
+            curr.execute(sql, sitters)
+            for item in curr:
+                result.append(item)
+            self.conn.commit()
+        return result
 
     def add_url(self, name: str):
         sql = "INSERT INTO urls (name) VALUES (%s) RETURNING id;"
-        id, errors = self.make_sql(sql=sql, sitters=(name,))
-        if not errors:
-            id = id[0][0]
-        return id, errors
+        id = self.make_sql(sql=sql, sitters=(name,))
+        return id[0][0]
 
     def add_check(self, url_id):
         sql = "SELECT name FROM urls WHERE id = %s"
         url = self.make_sql(sql=sql, sitters=(url_id,))[0]
         data = get_url_params(url=url)
         if 'error' in data:
-            return None, {'sql': data['error']}
+            return None
         sql = """INSERT INTO url_checks
                     (url_id, status_code, h1, title, description)
                     VALUES (%s, %s, %s, %s, %s) RETURNING id;"""
-        id, errors = self.make_sql(
+        id = self.make_sql(
             sql=sql,
             sitters=(
                 url_id, 200, data['h1'],
                 data['title'], data['description']))
-        if not errors:
-            id = id[0][0]
-        return id, errors
+        return id[0][0]
 
     def show_urls(self):
         sql = """SELECT
@@ -64,24 +56,18 @@ class Url_sql:
                 GROUP BY urls.id, urls.name, url_checks.status_code
                 ORDER BY MAX(url_checks.created_at) DESC NULLS LAST;
                 """
-        result, errors = self.make_sql(sql)
-        return result, errors
+        return self.make_sql(sql)
 
-    def show_url(self, id: int = None, name: str = None):
-        result = []
-        errors = {}
-        if id:
-            sql = "SELECT * from urls WHERE id = %s"
-            result, errors = self.make_sql(sql=sql, sitters=(id,))
-        if name:
-            sql = "SELECT * from urls WHERE name = %s"
-            result, errors = self.make_sql(sql=sql, sitters=(name,))
-        if not errors and result:
-            result = dict(result[0])
-            sql = """SELECT id, status_code, h1, title, description, created_at
-                     FROM url_checks WHERE url_id = %s
-                     ORDER BY created_at DESC"""
-            result['checks'], errors = self.make_sql(
-                sql=sql,
-                sitters=(result['id'],))
-        return result, errors
+    def get_url_by_id(self, id: int):
+        sql = "SELECT * from urls WHERE id = %s"
+        return self.make_sql(sql=sql, sitters=(id,))
+
+    def get_url_by_name(self, name: str):
+        sql = "SELECT * from urls WHERE name = %s"
+        return self.make_sql(sql=sql, sitters=(name,))
+
+    def get_checks(self, id: int):
+        sql = """SELECT id, status_code, h1, title, description, created_at
+                 FROM url_checks WHERE url_id = %s
+                 ORDER BY created_at DESC"""
+        return self.make_sql(sql=sql, sitters=(id,))

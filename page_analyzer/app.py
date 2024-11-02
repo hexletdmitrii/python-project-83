@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+db = Url_sql()
 
 
 @app.template_filter('format_date')
@@ -25,23 +26,26 @@ def index():
 
 @app.get('/urls')
 def show_urls():
-    data, errors = Url_sql().show_urls()
+    data = db.show_urls()
     return render_template("urls.html", urls=data)
 
 
 @app.get('/urls/<int:id>')
 def show_url(id):
-    data, errors = Url_sql().show_url(id)
+    data = db.get_url_by_id(id)
     if not data:
+        flash('Такая страница еще не добавлена', 'danger')
         return redirect(url_for('index'))
+    data = dict(db.get_url_by_id(id)[0])
+    data['checks'] = db.get_checks(data['id'])
     return render_template("url.html", url=data)
 
 
 @app.post('/urls/<id>/checks')
 def check_url(id):
-    url_id, errors = Url_sql().add_check(id)
-    if errors or not url_id:
-        flash(f'Произошла ошибка при проверке', 'danger')
+    url_id = db.add_check(id)
+    if not url_id:
+        flash('Произошла ошибка при проверке', 'danger')
     else:
         flash('Страница успешно проверена', 'success')
     return redirect(url_for('show_url', id=id))
@@ -55,18 +59,10 @@ def add_url():
         return render_template('index.html'), 422
     url = urlparse(url)
     base_url = f"{url.scheme}://{url.netloc}/"
-    data, errors = Url_sql().show_url(name=base_url)
-    if errors:
-        return redirect(url_for('index'))
+    data = db.get_url_by_name(name=base_url)
     if data:
         flash('Страница уже существует', 'success')
         return redirect(url_for('show_url', id=data['id']))
-    url_id, errors = Url_sql().add_url(base_url)
-    if errors:
-        return redirect(url_for('index'))
+    url_id = db.add_url(base_url)
     flash('Страница успешно добавлена', 'success')
     return redirect(url_for('show_url', id=url_id))
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
