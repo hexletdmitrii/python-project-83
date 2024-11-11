@@ -6,7 +6,7 @@ def get_url_params(url: str = None) -> dict:
     try:
         response = requests.get(url[0])
         if response.status_code != 200:
-            return {'error': response.status_code}
+            return {'error': 'Произошла ошибка при проверке'}
         else:
             soup = BeautifulSoup(response.content, 'html.parser')
             title = soup.find('title').text[:255] if soup.find('title') else ''
@@ -15,5 +15,5 @@ def get_url_params(url: str = None) -> dict:
                 'meta', attrs={'name': 'description'})['content'][:255] \
                 if soup.find('meta', attrs={'name': 'description'}) else ''
             return {'title': title, 'h1': h1, 'description': description}
-    except Exception as e:
+    except requests.RequestException as e:
         return {'error': e}

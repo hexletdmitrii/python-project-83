@@ -9,8 +9,6 @@ env/
 venv/
 ENV/
 dist/
-# PyCharm
-.idea/
 
 # VS Code
 .vscode/
